@@ -71,3 +71,39 @@ app.post(
 );
 
 ```
+
+# what is .env file 
+A .env file is used to store environment variables like database URLs, API keys, passwords, and ports outside your code.
+<br>
+This is very important for production and security.
+<br>
+
+<b>Why do we need .env?</b>
+<br>
+
+Without .env file (This is not a good practice):
+
+```bash
+mongoose.connect("mongodb+srv://user:pass@cluster.mongodb.net/db");
+
+```
+<br>
+
+With .env(This is best practice and useful in production)
+
+```bash
+mongoose.connect(process.env.MONGO_URI);
+```
+<br>
+
+<b>What is inside .env file :</b>
+
+```bash
+PORT=3000
+MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/myDB
+JWT_SECRET=mySecretKey
+NODE_ENV=production
+
+etc.
+
+```
