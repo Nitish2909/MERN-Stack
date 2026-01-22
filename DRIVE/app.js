@@ -7,6 +7,7 @@ dotenv.config();
 const connectToDB = require("./config/db")
 connectToDB();
 const cookiparser=require("cookie-parser")
+const homeRouter= require("./routes/home.routes")
 
 //this is used for html page rendering
 app.set("view engine", "ejs")
@@ -18,6 +19,7 @@ app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
 
+app.use("/",homeRouter)
 //this is used for config the router
 //It tells Express to use userRouter for all requests whose URL starts with /user.
 app.use("/user",userRouter)
