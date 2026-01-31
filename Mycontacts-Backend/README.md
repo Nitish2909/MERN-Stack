@@ -329,3 +329,201 @@ app.get("/users/:id", (req, res) => {
 { id: "10"}
 
 ```
+# Middleware in Express :
+Middleware is a function that runs between Request ans Response.
+<br>
+
+Flows :
+
+```bash
+Client -> Middleware -> Route -> Response
+
+```
+<br>
+
+<b> Middleware Function Structure</b>
+
+```bash
+
+(req,res,next)=>{
+  
+  //do something
+
+  next() //move to nest step
+
+  //if you don't call next() , request gets stuck
+}
+<br>
+
+<b>Why do we need Middleware :</b>
+
+```bash
+
+Middleware is used for :
+
+Authentication 
+
+Authorization 
+
+Logging 
+
+Validation 
+
+Error handling 
+
+Parsing JSON
+
+```
+<br>
+
+<b>Built-In Middleware :</b>
+
+```bash
+
+There are Two Built-In middleware :
+
+//1. Parsing JSON Body
+app.use(express.json());
+
+
+//2. Parsing Form Data
+app.use(express.urlencoded({ extended: true}));
+
+```
+<br>
+
+<b>Custom Middleware (Most Important)</b>
+
+```bash
+
+// Auth Middleware Example
+
+const protect = (req, res, next) => {
+  const token = req.headers.authorization;
+
+  if (!token) {
+    return res.status(401).json({ message: "No token" });
+  }
+
+  next(); // user is allowed
+};
+
+//use it
+
+app.get("/profile", protect, (req, res) => {
+  res.send("Profile data");
+});
+
+```
+<br>
+
+<b>Error-Handling Middleware :</b>
+
+```bash
+//This middleware have 4 arguments:
+
+const errorHandler = (err, req, res, next) => {
+  res.status(500).json({
+    message: err.message
+  });
+};
+
+app.use(errorHandler);
+
+```
+<br>
+
+<b>A complete mini Example of middleware to understand :</b>
+
+```bash
+app.use(express.json());
+
+const checkAge = (req, res, next) => {
+  if (req.body.age < 18) {
+    return res.status(403).json({ message: "Underage" });
+  }
+  next();
+};
+
+app.post("/register", checkAge, (req, res) => {
+  res.send("Registered");
+});
+
+```
+<br>
+
+# What is asyncHandler in Express 
+asyncHandler is a helper function that catches errors in async routes automatically and sends them to Express error middleware.
+<br>
+In Simple word we can say that It saves you from writing try-catch everywhere.
+<br>
+asyncHandler Mostly used because when we are working wit MongoDB and mongoose it return promise.that is why it used to handle promise.
+<br>
+When should you use it?
+<br>
+Async controllers
+<br>
+Database calls (MongoDB, SQL)
+<br>
+API routes with await
+<br>
+
+<b>If you want to use asyncHandler then first need to install it by following Commands</b>
+
+```bash
+npm install express-async-handler
+
+```
+<br>
+
+Example:
+
+```bash
+// controllers/userController.js
+import asyncHandler from "express-async-handler";
+
+export const getUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  res.json(user);
+});
+
+```
+<br>
+
+<b>How does it work internally?</b>
+
+```bash
+const asyncHandler = fn => (req, res, next) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
+
+//Any error is automatically forwarded to error middleware.
+
+```
+<br>
+
+<b>Important Requirement :</b>
+
+```bash
+//You MUST have an error-handling middleware:
+
+app.use((err, req, res, next) => {
+  res.status(res.statusCode || 500).json({
+    message: err.message
+  });
+});
+
+
+//Without this, errors won't be handled properly.
+
+```
+# what is mongoose
+Mongoose is an ODM (Object Data Modeling) library for MongoDB and Node.js.
+<br>
+In simple words Mongoose helps your Node.js app talk to MongoDB easily and safely.
